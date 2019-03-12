@@ -1,0 +1,47 @@
+<request>
+  <accountLoginThs>
+    <url>http://upass.10jqka.com.cn/login</url>
+    <params>
+      <act>login_submit</act>
+      <redir>http://moni.10jqka.com.cn/moni/</redir>
+      <uname>
+        TfajRWHJy4n8V/+lRS1ND5X7lz5mgYabhH1F/L0MhpDRpmM3kS9lonuhX9Up1Z7amlzmfxXnQXd/L3L/yCh0AjZDKv3hFzJpKzDj/H6Yh4G7WxpfxD4NytFE7WGGlNsZbdN1r1P5NWwJ0P3NqLO9CiGj5prDjqZ0eYQ1Y8TTRo4=
+      </uname>
+      <passwd>
+        uKApp1b0+di+bGPqSM43+DYJFJG94gnUkgD+r3FdJdrtv9/+VUGE6jgvMgMDI6CLfk43MDZvSrWPi9ZSqhQtm/l6FhD5Wh2ZJWIgrnap8PrB5vb31sw9u7qIIm3hgOgxcUE1cbXvBwoYZPFyftUUyiZFHuFC9lPZHr2BL0mvlV8=
+      </passwd>
+      <captchaCode></captchaCode>
+      <longLogin>on</longLogin>
+      <rsa_version>default_2</rsa_version>
+      <submit>登　录</submit>
+    </params>
+    <removeCookieKeys>
+      <key>PHPSESSID</key>
+      <key>ths_login_uname</key>
+    </removeCookieKeys>
+    <headers></headers>
+    <mailSubject></mailSubject>
+    <isFinish>false</isFinish>
+    <isPost>true</isPost>
+  </accountLoginThs>
+  <baiduCount>
+    <url>http://hm.baidu.com/hm.js?78c58f01938e4d85eaf619eae71b4ed1</url>
+    <headers>Referer:http://moni.10jqka.com.cn/</headers>
+    <isPost>false</isPost>
+    <removeCookieKeys>
+      <key>HMACCOUNT</key>
+    </removeCookieKeys>
+  </baiduCount>
+  <autoLoginThs>
+    <url>http://mncg.10jqka.com.cn/cgiwt/login/doths/?type=auto&uname=44011300&password=</url>
+    <isPost>false</isPost>
+    <removeCookieKeys>
+      <key>oldaccount</key>
+    </removeCookieKeys>
+  </autoLoginThs>
+  <qryChicang>
+    <url>http://mncg.10jqka.com.cn/cgiwt/delegate/qryChicang</url>
+    <mailSubject>查询持仓失败</mailSubject>
+    <isPost>true</isPost>
+  </qryChicang>
+</request>

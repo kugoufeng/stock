@@ -1,0 +1,68 @@
+package cn.jeremy.stock.bean;
+
+import java.io.File;
+
+/**
+ * 邮件附件
+ *
+ * @author kugoufeng
+ * @date 2017/12/21 上午 10:01
+ */
+public class AttachBean
+{
+
+    private String cid;
+
+    private File file;
+
+    private String fileName;
+
+    public String getCid()
+    {
+        return cid;
+    }
+
+    public void setCid(String cid)
+    {
+        this.cid = cid;
+    }
+
+    public File getFile()
+    {
+        return file;
+    }
+
+    public void setFile(File file)
+    {
+        this.file = file;
+    }
+
+    public String getFileName()
+    {
+        return fileName;
+    }
+
+    public void setFileName(String fileName)
+    {
+        this.fileName = fileName;
+    }
+
+    public AttachBean()
+    {
+
+    }
+
+    public AttachBean(File file, String fileName)
+    {
+        super();
+        this.file = file;
+        this.fileName = fileName;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "AttachBean [cid=" + cid + ", file=" + file + ", fileName=" + fileName + "]";
+    }
+
+}
