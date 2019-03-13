@@ -44,10 +44,17 @@ public class TimelyGetStockPrizeJob implements Job
                     FileTools.createOrExistsFile(filePath);
                     if (FileTools.getFileLines(filePath) == 0)
                     {
+                        int pClosePrice = ThsMockTrade.getInstance().queryStockPClosePrice(split[1]);
+                        String content =
+                            DateTools.getCurrentDate(DateTools.DATE_FORMAT_21).concat(String.valueOf(pClosePrice / 100F)).concat("\n");
+                        FileTools.writeFileFromString(filePath, content, false);
+                    }
+                    else if (FileTools.getFileLines(filePath) == 1)
+                    {
                         int openPrice = ThsMockTrade.getInstance().queryStockOpenPrice(split[1]);
                         String content =
                             DateTools.getCurrentDate(DateTools.DATE_FORMAT_21).concat(String.valueOf(openPrice / 100F)).concat("\n");
-                        FileTools.writeFileFromString(filePath, content, false);
+                        FileTools.writeFileFromString(filePath, content, true);
                     }
                     else
                     {

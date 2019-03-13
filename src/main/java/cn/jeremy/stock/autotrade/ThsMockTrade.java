@@ -502,6 +502,13 @@ public class ThsMockTrade implements Trade
         return StringTools.yuanToFen(price);
     }
 
+    @Override
+    public int queryStockPClosePrice(String stockCode)
+    {
+        String price = queryStockData(stockCode, TYPE_BUY, "st_pclose");
+        return StringTools.yuanToFen(price);
+    }
+
     public String queryStockData(String stockCode, String type, String dataKey)
     {
         Map<String, String> postParams = new HashMap<>(16);

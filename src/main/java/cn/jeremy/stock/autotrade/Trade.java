@@ -75,6 +75,16 @@ public interface Trade
     int queryStockOpenPrice(String stockCode);
 
     /**
+     * 查询昨天收盘价
+     *
+     * @param stockCode
+     * @return int
+     * @throws
+     * @author fengjiangtao
+     */
+    int queryStockPClosePrice(String stockCode);
+
+    /**
      * 撤单
      *
      * @param orderId 要撤单的撤单号
