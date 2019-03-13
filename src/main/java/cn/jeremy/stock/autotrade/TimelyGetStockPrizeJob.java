@@ -3,13 +3,17 @@ package cn.jeremy.stock.autotrade;
 import cn.jeremy.stock.tools.DateTools;
 import cn.jeremy.stock.tools.FileTools;
 import cn.jeremy.stock.tools.PropertiesTools;
-import java.util.List;
+import cn.jeremy.stock.tools.StringTools;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.List;
 
 /**
  * 实时获取股票价格
@@ -24,6 +28,14 @@ public class TimelyGetStockPrizeJob implements Job
     private static String stockStoreRootPath = PropertiesTools.getProperty("stockStoreRootPath");
 
     private static String stockFile = stockStoreRootPath.concat("/stock.txt");
+
+    private static NumberFormat nf = NumberFormat.getNumberInstance();
+
+    static
+    {
+        nf.setMaximumFractionDigits(2);
+        nf.setRoundingMode(RoundingMode.UP);
+    }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext)
@@ -40,27 +52,44 @@ public class TimelyGetStockPrizeJob implements Job
                 {
                     String[] split = stock.split(" ");
                     String filePath =
-                        stockStoreRootPath.concat("/stock/").concat(split[0]).concat("/").concat(currentDate).concat(".txt");
+                        stockStoreRootPath.concat("/stock/")
+                            .concat(split[0])
+                            .concat("/")
+                            .concat(currentDate)
+                            .concat(".txt");
                     FileTools.createOrExistsFile(filePath);
                     if (FileTools.getFileLines(filePath) == 0)
                     {
                         int pClosePrice = ThsMockTrade.getInstance().queryStockPClosePrice(split[1]);
                         String content =
-                            DateTools.getCurrentDate(DateTools.DATE_FORMAT_21).concat(String.valueOf(pClosePrice / 100F)).concat("\n");
+                            DateTools.getCurrentDate(DateTools.DATE_FORMAT_21)
+                                .concat("-")
+                                .concat(String.valueOf(pClosePrice / 100F))
+                                .concat("\n");
                         FileTools.writeFileFromString(filePath, content, false);
                     }
                     else if (FileTools.getFileLines(filePath) == 1)
                     {
                         int openPrice = ThsMockTrade.getInstance().queryStockOpenPrice(split[1]);
+                        double range = countRange(getPClosePrize(filePath), openPrice);
+                        String rangeStr = range < 0 ?
+                            "-↓".concat(nf.format(-range)) : "-↑".concat(nf.format(range));
                         String content =
-                            DateTools.getCurrentDate(DateTools.DATE_FORMAT_21).concat(String.valueOf(openPrice / 100F)).concat("\n");
+                            DateTools.getCurrentDate(DateTools.DATE_FORMAT_21).concat("-")
+                                .concat(String.valueOf(openPrice / 100F)).concat(rangeStr)
+                                .concat("\n");
                         FileTools.writeFileFromString(filePath, content, true);
                     }
                     else
                     {
                         int sellPrice = ThsMockTrade.getInstance().queryStockSellPrice(split[1]);
+                        double range = countRange(getPClosePrize(filePath), sellPrice);
+                        String rangeStr = range < 0 ?
+                            "-↓".concat(nf.format(-range)) : "-↑".concat(nf.format(range));
                         String content =
-                            DateTools.getCurrentDate(DateTools.DATE_FORMAT_21).concat(String.valueOf(sellPrice / 100F)).concat("\n");
+                            DateTools.getCurrentDate(DateTools.DATE_FORMAT_21).concat("-")
+                                .concat(String.valueOf(sellPrice / 100F)).concat(rangeStr)
+                                .concat("\n");
                         FileTools.writeFileFromString(filePath, content, true);
                     }
                 }
@@ -70,6 +99,30 @@ public class TimelyGetStockPrizeJob implements Job
         {
             LOGGER.error("exit ActualTradeJob, e:{}", e);
         }
+    }
+
+    private int getPClosePrize(String filePath)
+    {
+        List<String> prizeList = FileTools.readFile2List(filePath, 1, 1, "utf-8");
+        if (CollectionUtils.isNotEmpty(prizeList))
+        {
+            String pClosePrize = prizeList.get(0);
+            String[] split = pClosePrize.split("-");
+            if (split != null && split.length > 0)
+            {
+                return StringTools.yuanToFen(split[split.length - 1]);
+            }
+        }
+        return 0;
+    }
+
+    private double countRange(int pCLosePrize, int prize)
+    {
+        if (pCLosePrize > 0)
+        {
+            return ((prize - pCLosePrize) * 1.0 / pCLosePrize) * 100;
+        }
+        return 0d;
     }
 
 }

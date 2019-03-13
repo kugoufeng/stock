@@ -1221,7 +1221,7 @@ public class FileTools
      */
     public static int getFileLines(File file)
     {
-        int count = 1;
+        int count = 0;
         InputStream is = null;
         try
         {
