@@ -29,12 +29,15 @@ public class TimelyGetStockPrizeJob implements Job
 
     private static String stockFile = stockStoreRootPath.concat("/stock.txt");
 
+    private static String stockPriseFile = stockStoreRootPath.concat("/prise.txt");
+
     private static NumberFormat nf = NumberFormat.getNumberInstance();
 
     static
     {
         nf.setMaximumFractionDigits(2);
         nf.setRoundingMode(RoundingMode.UP);
+        FileTools.createOrExistsFile(stockPriseFile);
     }
 
     @Override
@@ -48,19 +51,24 @@ public class TimelyGetStockPrizeJob implements Job
             if (CollectionUtils.isNotEmpty(stockList))
             {
                 String currentDate = DateTools.getCurrentDate(DateTools.DATE_FORMAT2_8);
+                int i = 0;
                 for (String stock : stockList)
                 {
+                    i++;
                     String[] split = stock.split(" ");
+                    String stockName = split[0];
+                    String stockCode = split[1];
                     String filePath =
                         stockStoreRootPath.concat("/stock/")
-                            .concat(split[0])
+                            .concat(stockName)
                             .concat("/")
                             .concat(currentDate)
                             .concat(".txt");
                     FileTools.createOrExistsFile(filePath);
+
                     if (FileTools.getFileLines(filePath) == 0)
                     {
-                        int pClosePrice = ThsMockTrade.getInstance().queryStockPClosePrice(split[1]);
+                        int pClosePrice = ThsMockTrade.getInstance().queryStockPClosePrice(stockCode);
                         String content =
                             DateTools.getCurrentDate(DateTools.DATE_FORMAT_21)
                                 .concat("-")
@@ -70,7 +78,7 @@ public class TimelyGetStockPrizeJob implements Job
                     }
                     else if (FileTools.getFileLines(filePath) == 1)
                     {
-                        int openPrice = ThsMockTrade.getInstance().queryStockOpenPrice(split[1]);
+                        int openPrice = ThsMockTrade.getInstance().queryStockOpenPrice(stockCode);
                         double range = countRange(getPClosePrize(filePath), openPrice);
                         String rangeStr = range < 0 ?
                             "-↓".concat(nf.format(-range)) : "-↑".concat(nf.format(range));
@@ -82,8 +90,9 @@ public class TimelyGetStockPrizeJob implements Job
                     }
                     else
                     {
-                        int sellPrice = ThsMockTrade.getInstance().queryStockSellPrice(split[1]);
-                        double range = countRange(getPClosePrize(filePath), sellPrice);
+                        int sellPrice = ThsMockTrade.getInstance().queryStockSellPrice(stockCode);
+                        int pClosePrize = getPClosePrize(filePath);
+                        double range = countRange(pClosePrize, sellPrice);
                         String rangeStr = range < 0 ?
                             "-↓".concat(nf.format(-range)) : "-↑".concat(nf.format(range));
                         String content =
@@ -91,6 +100,15 @@ public class TimelyGetStockPrizeJob implements Job
                                 .concat(String.valueOf(sellPrice / 100F)).concat(rangeStr)
                                 .concat("\n");
                         FileTools.writeFileFromString(filePath, content, true);
+                        content = stockName.concat(" ").concat(String.valueOf(pClosePrize / 100F)).concat("-").concat(content);
+                        if (i == 1)
+                        {
+                            FileTools.writeFileFromString(stockPriseFile, content, false);
+                        }
+                        else
+                        {
+                            FileTools.writeFileFromString(stockPriseFile, content, true);
+                        }
                     }
                 }
             }
