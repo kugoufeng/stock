@@ -18,7 +18,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.cookie.Cookie2;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -145,7 +144,7 @@ public class HttpTools
      * @param headers 请求头
      * @return cn.jeremy.stock.bean.HttpResult
      */
-    public HttpResult sendRequest(String url, String xml, String headers)
+    public HttpResult sendRequest(String url, String xml, String headers, String respCharset)
     {
         if (LOGGER.isDebugEnabled())
         {
@@ -163,7 +162,7 @@ public class HttpTools
             httpMethod.setRequestEntity(entity);
             // 处理响应结果码
             int resultCode = httpClient.executeMethod(httpMethod);
-            resp = getHttpResult(resultCode, httpMethod);
+            resp = getHttpResult(resultCode, respCharset, httpMethod);
         }
         catch (Exception ex)
         {
@@ -183,7 +182,7 @@ public class HttpTools
      * @param httpMethod 带用响应体的请求对象
      * @return cn.jeremy.stock.bean.HttpResult
      */
-    private HttpResult getHttpResult(int resultCode, HttpMethodBase httpMethod)
+    private HttpResult getHttpResult(int resultCode, String charset, HttpMethodBase httpMethod)
         throws IOException
     {
         if (LOGGER.isDebugEnabled())
@@ -214,7 +213,7 @@ public class HttpTools
             }
             else
             {
-                responseXml = new String(resBody, UTF_8);
+                responseXml = new String(resBody, charset);
             }
 
             httpResult.setRespCode(HttpStatus.SC_OK);
@@ -250,7 +249,7 @@ public class HttpTools
      * @param headers 请求头地址
      * @return cn.jeremy.stock.bean.HttpResult
      */
-    public HttpResult sendRequestByPost(String url, Map<String, String> postParams, String headers)
+    public HttpResult sendRequestByPost(String url, Map<String, String> postParams, String headers, String respCharset)
     {
 
         if (LOGGER.isDebugEnabled())
@@ -285,7 +284,7 @@ public class HttpTools
             }
 
             int resultCode = httpClient.executeMethod(postMethod);
-            resp = getHttpResult(resultCode, postMethod);
+            resp = getHttpResult(resultCode, respCharset, postMethod);
         }
         catch (Exception ex)
         {
@@ -315,9 +314,9 @@ public class HttpTools
      * @return cn.jeremy.stock.bean.HttpResult
      */
     public HttpResult sendRequestByPost(String url, Map<String, String> postParams, String headers, String mailSubject,
-        boolean isFinish)
+        boolean isFinish, String respCharset)
     {
-        HttpResult result = sendRequestByPost(url, postParams, headers);
+        HttpResult result = sendRequestByPost(url, postParams, headers, respCharset);
         //请求不成功，记录错误日志
         if (result.getRespCode() != HttpStatus.SC_OK)
         {
@@ -354,7 +353,7 @@ public class HttpTools
      * @param headers 请求头
      * @return cn.jeremy.stock.bean.HttpResult
      */
-    public HttpResult sendHttpRequestByGet(String url, String headers)
+    public HttpResult sendHttpRequestByGet(String url, String headers, String respCharset)
     {
         if (LOGGER.isDebugEnabled())
         {
@@ -368,7 +367,7 @@ public class HttpTools
         try
         {
             int resultCode = httpClient.executeMethod(getMethod);
-            resp = getHttpResult(resultCode, getMethod);
+            resp = getHttpResult(resultCode, respCharset, getMethod);
         }
         catch (Throwable e)
         {
@@ -419,11 +418,13 @@ public class HttpTools
                 requestElement.getRequestParams(),
                 requestElement.getHeaders(),
                 requestElement.getMailSubject(),
-                requestElement.isFinish());
+                requestElement.isFinish(), requestElement.getRespCharset());
         }
         else
         {
-            result = sendHttpRequestByGet(requestElement.getUrl(), requestElement.getHeaders());
+            result = sendHttpRequestByGet(requestElement.getUrl(),
+                requestElement.getHeaders(),
+                requestElement.getRespCharset());
         }
 
         if (LOGGER.isDebugEnabled())

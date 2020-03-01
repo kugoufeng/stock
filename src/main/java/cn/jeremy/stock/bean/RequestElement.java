@@ -33,6 +33,8 @@ public class RequestElement
     /** true为post请求，false为get请求*/
     private boolean isPost;
 
+    private String respCharset = "utf-8";
+
     public String getUrl()
     {
         return url;
@@ -103,17 +105,29 @@ public class RequestElement
         isPost = post;
     }
 
+    public String getRespCharset()
+    {
+        return respCharset;
+    }
+
+    public void setRespCharset(String respCharset)
+    {
+        this.respCharset = respCharset;
+    }
+
     @Override
     public String toString()
     {
-        return new ToStringBuilder(this)
-            .append("url", url)
-            .append("requestParams", requestParams)
-            .append("headers", headers)
-            .append("mailSubject", mailSubject)
-            .append("isFinish", isFinish)
-            .append("removeCookieKeys", removeCookieKeys)
-            .append("isPost", isPost)
-            .toString();
+        final StringBuffer sb = new StringBuffer("RequestElement{");
+        sb.append("url='").append(url).append('\'');
+        sb.append(", requestParams=").append(requestParams);
+        sb.append(", headers='").append(headers).append('\'');
+        sb.append(", mailSubject='").append(mailSubject).append('\'');
+        sb.append(", isFinish=").append(isFinish);
+        sb.append(", removeCookieKeys=").append(removeCookieKeys);
+        sb.append(", isPost=").append(isPost);
+        sb.append(", respCharset='").append(respCharset).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

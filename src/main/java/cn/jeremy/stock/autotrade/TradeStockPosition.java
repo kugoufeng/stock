@@ -49,7 +49,7 @@ public abstract class TradeStockPosition
     {
         HttpResult result = HttpTools.getInstance().sendRequestByPost(url,
             requestMap,
-            reqHeader, GET_STOCK_POSITION_FAIL_SUBJECT, Boolean.TRUE);
+            reqHeader, GET_STOCK_POSITION_FAIL_SUBJECT, Boolean.TRUE,"utf-8");
         if (result.getRespCode() == HttpStatus.SC_OK)
         {
             return parseXML(result.getResponseBody());

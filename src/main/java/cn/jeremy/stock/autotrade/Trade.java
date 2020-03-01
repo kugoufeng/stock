@@ -104,4 +104,25 @@ public interface Trade
      * @author fengjiangtao
      */
     String getRequestCookie();
+
+
+    /**
+     * 同步a股市场所有股票代码
+     *
+     *
+     * @return
+     * @throws
+     * @author fengjiangtao
+     */
+    void updateAMarkStocks();
+
+    /**
+     * 更新个股收盘时数据
+     *
+     *
+     * @return
+     * @throws
+     * @author fengjiangtao
+     */
+    void updateStockCloseData();
 }
