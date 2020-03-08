@@ -834,9 +834,10 @@ public class ThsMockTrade implements Trade
                     }
                     setStockTradeData(stockCloseData, num);
                     insertOrUpdateStockCloseData(connection, stockCloseData, num);
+                    Thread.sleep(1000);
                 }
             }
-            catch (SQLException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
