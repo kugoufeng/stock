@@ -59,7 +59,7 @@
     <commons.codec.version>1.11</commons.codec.version>
     <commons.lang.version>2.6</commons.lang.version>
     <httpclient.version>3.1</httpclient.version>
-    <jsoup.version>1.11.2</jsoup.version>
+    <jsoup.version>1.14.2</jsoup.version>
     <c3p0.version>0.9.5.2</c3p0.version>
     <quartz.version>2.3.0</quartz.version>
     <jna.version>4.5.0</jna.version>
